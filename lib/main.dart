@@ -98,9 +98,96 @@ class Home extends HookWidget {
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           children: <Widget>[
-            //TODO
+            const Title(),
+            TextField(
+              key: addTodoKey,
+              controller: newTodoController,
+              decoration: const InputDecoration(
+                labelText: 'What needs to be done?',
+              ),
+              onSubmitted: (value) {
+                todoListProvider.read(context).add(value);
+                newTodoController.clear();
+              },
+            ),
+            const SizedBox(height: 42),
+            Column(
+              children: [
+                const Toolbar(),
+                if (todos.isNotEmpty) const Divider(height: 0),
+                for (var i = 0; i < todos.length; i++) ...[
+                  if (i > 0) const Divider(height: 0),
+                  Dismissible(
+                    key: ValueKey(todos[i].id),
+                    onDismissed: (_) {
+                      todoListProvider.read(context).remove(todos[i]);
+                    },
+                    child: TodoItem(todos[i]),
+                  )
+                ],
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class Toolbar extends HookWidget {
+  const Toolbar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final filter = useProvider(todoListFilter);
+
+    Color textColorFor(TodoListFilter value) {
+      return filter.state == value ? Colors.blue : null;
+    }
+
+    return Material(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              '${useProvider(uncompletedTodosCount).toString()} items left',
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Tooltip(
+            key: allFilterKey,
+            message: 'All todos',
+            child: FlatButton(
+              onPressed: () => filter.state = TodoListFilter.all,
+              visualDensity: VisualDensity.compact,
+              textColor: textColorFor(TodoListFilter.all),
+              child: const Text('All'),
+            ),
+          ),
+          Tooltip(
+            key: activeFilterKey,
+            message: 'Only uncompleted todos',
+            child: FlatButton(
+              onPressed: () => filter.state = TodoListFilter.active,
+              visualDensity: VisualDensity.compact,
+              textColor: textColorFor(TodoListFilter.active),
+              child: const Text('Active'),
+            ),
+          ),
+          Tooltip(
+            key: completedFilterKey,
+            message: 'Only completed todos',
+            child: FlatButton(
+              onPressed: () => filter.state = TodoListFilter.completed,
+              visualDensity: VisualDensity.compact,
+              textColor: textColorFor(TodoListFilter.completed),
+              child: const Text('Completed'),
+            ),
+          ),
+        ],
       ),
     );
   }

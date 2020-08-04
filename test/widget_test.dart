@@ -33,7 +33,6 @@ void main() {
     matching: find.byType(Checkbox),
   );
 
-  /*
   testWidgets('Render the default todos', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: MyApp()));
 
@@ -67,7 +66,6 @@ void main() {
       matchesGoldenFile('initial_state.png'),
     );
   }, skip: !Platform.isMacOS);
-  */
 
   testWidgets('Clicking on checkbox toggles the todo', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: MyApp()));
@@ -177,7 +175,6 @@ void main() {
     expect(thirdItem, findsOneWidget);
   });
 
-  /*
   testWidgets('The input allows adding todos', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: MyApp()));
 
@@ -216,5 +213,4 @@ void main() {
     expect(find.text('4 items left'), findsOneWidget);
     expect(find.text('3 items left'), findsNothing);
   }, skip: !Platform.isMacOS);
-  */
 }
